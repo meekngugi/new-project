@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Landlord Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+ <link rel="icon" type="image/png" href="images/favicon.png">
+
+</head>
+<body>
+  <div class="container">
+    <h1>Rental Management Dashboard</h1>
+    <div id="greeting" style="margin-bottom: 20px; font-size: 1.2em; color: #ffffff;"></div>
+
+    <nav>
+      <ul>
+        <li><a href="#addRental">Add Rental</a></li>
+        <li><a href="#maintenance">View Maintenance Requests</a></li>
+        <li><a href="#payments">View Payments</a></li>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      </ul>
+    </nav>
+
+    <section id="addRental">
+      <h2>Add Rental</h2>
+      <form id="rentalForm">
+        <input type="text" id="propertyName" placeholder="Property Name" required />
+        <input type="text" id="tenantName" placeholder="Tenant Name" required />
+        <input type="date" id="rentalDate" required />
+        <input type="number" id="rentalAmount" placeholder="Rental Amount" required />
+        <button type="submit">Add Rental</button>
+      </form>
+      <h3>Current Rentals</h3>
+      <div id="rentalList" class="data-list"></div>
+    </section>
+
+    <section id="maintenance">
+      <h2>Maintenance Requests</h2>
+      <div id="issueList" class="data-list"></div>
+    </section>
+
+    <section id="payments">
+      <h2>Tenant Payments</h2>
+      <div id="paymentList" class="data-list"></div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const username = localStorage.getItem('username') || 'Landlord';
+    const role = localStorage.getItem('role') || 'landlord';
+    document.getElementById('greeting').textContent = `Welcome, ${role.charAt(0).toUpperCase() + role.slice(1)} ${username}!`;
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.clear();
+      alert('You have been logged out.');
+      window.location.href = '/login.html';
+    });
+
+    async function fetchMaintenanceIssues() {
+      try {
+        const res = await fetch('/api/maintenance');
+        const issues = await res.json();
+        const issueList = document.getElementById('issueList');
+        issueList.innerHTML = '';
+
+        issues.forEach(issue => {
+          const item = document.createElement('div');
+          item.style.marginBottom = '10px';
+          item.innerHTML = `
+            <strong>Issue:</strong> ${issue.issueDescription}<br>
+            <strong>Tenant:</strong> ${issue.tenantName}
+          `;
+          issueList.appendChild(item);
+        });
+      } catch (err) {
+        console.error('Error fetching maintenance:', err);
+      }
+    }
+    async function fetchPayments() {
+      try {
+        const res = await fetch('/api/payments');
+        const payments = await res.json();
+        const paymentList = document.getElementById('paymentList');
+        paymentList.innerHTML = '';
+
+        payments.forEach(payment => {
+          const item = document.createElement('div');
+          item.style.marginBottom = '10px';
+          item.innerHTML = `
+            <strong>Tenant:</strong> ${payment.tenantName}<br>
+            <strong>Amount:</strong> $${payment.paymentAmount}<br>
+            <strong>Date:</strong> ${new Date(payment.date).toLocaleDateString()}
+          `;
+          paymentList.appendChild(item);
+        });
+      } catch (err) {
+        console.error('Error fetching payments:', err);
+      }
+    }
+    fetchMaintenanceIssues();
+    fetchPayments();
+  </script>
+</body>
+</html>

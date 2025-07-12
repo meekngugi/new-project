@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Rental Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="styles3.css" />
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome, <span id="userGreeting">Tenant</span></h1>
+
+    <nav>
+      <ul>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      </ul>
+    </nav>
+
+    <section>
+      <h2>Personal Info</h2>
+      <div id="userInfo"></div>
+    </section>
+
+    <section>
+      <h2>My Rentals</h2>
+      <div id="myRentals" class="data-list"></div>
+    </section>
+
+    <section>
+      <h2>Payment History</h2>
+      <div id="myPayments" class="data-list"></div>
+    </section>
+
+    <section>
+      <h2>Make a Payment</h2>
+      <form id="paymentForm">
+        <input type="number" id="paymentAmount" placeholder="Payment Amount" required />
+        <button type="submit">Pay Now</button>
+      </form>
+    </section>
+
+    <section>
+      <h2>Report an Issue</h2>
+      <form id="maintenanceForm">
+        <input type="text" id="issueDescription" placeholder="Describe the issue" required />
+        <button type="submit">Report Issue</button>
+      </form>
+    </section>
+
+    <section>
+      <p style="margin-top: 2rem; font-style: italic; color: #ffffff;">
+        If you need help or have issues, please contact your landlord or revisit the dashboard for more tools.
+      </p>
+    </section>
+  </div>
+
+  <script>
+    const currentUsername = localStorage.getItem('username') || 'Tenant';
+
+    document.getElementById('userGreeting').textContent = currentUsername;
+
+    fetch('/api/users/' + currentUsername)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('userInfo').innerHTML = `
+          <strong>Full Name:</strong> ${data.fullname}<br>
+          <strong>Email:</strong> ${data.email}<br>
+          <strong>Username:</strong> ${data.username}<br>
+          <strong>Role:</strong> ${data.role}
+        `;
+      });
+
+    fetch('/api/rentals')
+      .then(res => res.json())
+      .then(rentals => {
+        const list = document.getElementById('myRentals');
+        rentals
+          .filter(r => r.tenantName === currentUsername)
+          .forEach(r => {
+            const item = document.createElement('div');
+            item.innerHTML = `
+              <strong>Property:</strong> ${r.propertyName}<br>
+              <strong>Date:</strong> ${r.rentalDate}<br>
+              <strong>Amount:</strong> $${r.rentalAmount}
+            `;
+            list.appendChild(item);
+          });
+      });
+
+    fetch('/api/payments')
+      .then(res => res.json())
+      .then(payments => {
+        const list = document.getElementById('myPayments');
+        payments
+          .filter(p => p.tenantName === currentUsername)
+          .forEach(p => {
+            const item = document.createElement('div');
+            item.innerHTML = `
+              <strong>Amount:</strong> $${p.paymentAmount}<br>
+              <strong>Date:</strong> ${new Date(p.date).toLocaleDateString()}
+            `;
+            list.appendChild(item);
+          });
+      });
+
+    document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        tenantName: currentUsername,
+        paymentAmount: document.getElementById('paymentAmount').value
+      };
+
+      try {
+        const res = await fetch('/api/payments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (res.ok) {
+          alert('Payment submitted successfully.');
+          e.target.reset();
+        } else {
+          alert('Failed to submit payment.');
+        }
+      } catch (err) {
+        console.error('Payment error:', err);
+        alert('Something went wrong.');
+      }
+    });
+
+    document.getElementById('maintenanceForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        tenantName: currentUsername,
+        issueDescription: document.getElementById('issueDescription').value
+      };
+
+      try {
+        const res = await fetch('/api/maintenance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (res.ok) {
+          alert('Issue reported successfully.');
+          e.target.reset();
+        } else {
+          alert('Failed to report issue.');
+        }
+      } catch (err) {
+        console.error('Maintenance error:', err);
+        alert('Something went wrong.');
+      }
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.clear();
+      alert('You have been logged out.');
+      window.location.href = '/login.html';
+    });
+  </script>
+</body>
+</html>

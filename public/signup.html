@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign Up - Rental System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/styles.css" />
+ <link rel="icon" type="image/png" href="images/favicon.png">
+
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-image: url('/images/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 450px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      border-radius: 15px;
+      padding: 35px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+      color: #f0f0f0;
+      text-align: center;
+      text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      font-size: 2em;
+      color: #ffffff;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #f5f5f5;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #f7f7f7;
+    }
+
+    button {
+      padding: 12px;
+      background-color: #007bff;
+      color: #ffffff;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    p {
+      margin-top: 15px;
+      font-size: 0.95em;
+      color: #eee;
+    }
+
+    a {
+      color: #f9f871;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-wrapper">
+    <h2>Create Your Account</h2>
+    <form id="signup-form">
+  <input type="text" id="fullname" name="fullname" placeholder="Full Name" required />
+  <input type="email" id="email" name="email" placeholder="Email Address" required />
+  <input type="text" id="username" name="username" placeholder="Username" required />
+  <input type="password" id="password" name="password" placeholder="Password" required />
+
+  <!-- Role Selection Dropdown -->
+  <select id="role" name="role" required>
+    <option value="" disabled selected>Select your role</option>
+    <option value="tenant">Tenant</option>
+    <option value="landlord">Landlord / Landlady</option>
+  </select>
+
+  <button type="submit">Sign Up</button>
+</form>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('signup-form');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const payload = {
+        fullname: document.getElementById('fullname').value,
+        email: document.getElementById('email').value,
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+        role: document.getElementById('role').value
+      };
+
+      try {
+        const res = await fetch('/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const text = await res.text();
+        if (res.ok) {
+          alert('Signup successful! Redirecting to login...');
+          window.location.href = '/login';
+        } else {
+          alert(`Signup failed: ${text}`);
+        }
+      } catch (err) {
+        console.error('Signup error:', err);
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  });
+</script>
+</body>
+</html>

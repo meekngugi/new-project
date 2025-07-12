@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About Us - Rental System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-image: url('/images/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 600;
+      font-size: 1.05em;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #f9f871;
+    }
+
+    .about-wrapper {
+      margin-top: 100px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      padding: 40px;
+      max-width: 700px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 2em;
+    }
+
+    p {
+      font-size: 1.15em;
+      line-height: 1.7;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 700px) {
+      nav {
+        flex-direction: column;
+        justify-content: center;
+        padding: 10px;
+      }
+
+      nav a {
+        margin: 10px 0;
+      }
+
+      .about-wrapper {
+        width: 90%;
+        padding: 30px;
+      }
+
+      h2 {
+        font-size: 1.6em;
+      }
+
+      p {
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/signup">Sign Up</a>
+    <a href="/login">Login</a>
+    <a href="/about">About Us</a>
+  </nav>
+
+  <div class="about-wrapper">
+    <h2>About Us</h2>
+    <p>
+      Welcome to our Rental Management System. We aim to simplify property rental for both landlords and tenants by offering efficient tools for online payments, maintenance tracking, and property management.
+    </p>
+    <p>
+      Whether you’re renting out multiple units or looking for your next home, our platform streamlines the entire process to save time and reduce stress.
+    </p>
+    <p>
+      Our mission is to make rental experiences seamless, transparent, and accessible.
+    </p>
+  </div>
+
+</body>
+</html>

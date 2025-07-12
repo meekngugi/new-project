@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Rental System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-image: url('/images/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(14px);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+      color: #f0f0f0;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 2em;
+      color: #ffffff;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input, select {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #f7f7f7;
+      outline: none;
+    }
+
+    input::placeholder { color: #f2f2f2; }
+    select option { color: #000; }
+
+    button {
+      padding: 12px;
+      background-color: #28a745;
+      color: #ffffff;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover { background-color: #218838; }
+
+    p {
+      margin-top: 15px;
+      font-size: 0.95em;
+      color: #ddd;
+    }
+
+    a {
+      color: #f9f871;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    @media (max-width: 500px) {
+      .form-wrapper {
+        width: 90%;
+        padding: 20px;
+      }
+      h2 {
+        font-size: 1.6em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-wrapper">
+    <h2>Login</h2>
+    <form id="login-form">
+      <input type="text" id="username" name="username" placeholder="Username" required />
+      <input type="password" id="password" name="password" placeholder="Password" required />
+
+      <select id="login-role" name="role" required>
+        <option value="" disabled selected>Select your role</option>
+        <option value="tenant">Tenant</option>
+        <option value="landlord">Landlord / Landlady</option>
+      </select>
+
+      <button type="submit">Login</button>
+    </form>
+    <p>Don’t have an account? <a href="/signup.html">Sign up here</a>.</p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('login-form');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const payload = {
+          username: document.getElementById('username').value.trim(),
+          password: document.getElementById('password').value,
+          role: document.getElementById('login-role').value
+        };
+
+        try {
+          const response = await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+
+            localStorage.setItem('username', userData.username);
+            localStorage.setItem('role', userData.role);
+
+            alert('Login successful! Redirecting...');
+
+            if (userData.role === 'tenant') {
+              window.location.href = '/profile.html';
+            } else {
+              window.location.href = '/dashboard.html';
+            }
+          } else {
+            const error = await response.text();
+            alert(`Login failed: ${error}`);
+          }
+        } catch (err) {
+          console.error('Login error:', err);
+          alert('Something went wrong. Please try again.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
